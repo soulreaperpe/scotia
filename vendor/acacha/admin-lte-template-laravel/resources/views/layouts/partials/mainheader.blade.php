@@ -6,7 +6,7 @@
         <!-- mini logo for sidebar mini 50x50 pixels -->
         <span class="logo-mini"><b>A</b>LT</span>
         <!-- logo for regular state and mobile devices -->
-        <span class="logo-lg"><b>Admin</b>LTE Laravel</span>
+        <span class="logo-lg"><b>Alfa</b>GL</span>
     </a>
 
     <!-- Header Navbar -->
@@ -18,6 +18,8 @@
         <!-- Navbar Right Menu -->
         <div class="navbar-custom-menu">
             <ul class="nav navbar-nav">
+{{--
+
                 <!-- Messages: style can be found in dropdown.less-->
                 <li class="dropdown messages-menu">
                     <!-- Menu toggle button -->
@@ -50,7 +52,7 @@
                         <li class="footer"><a href="#">c</a></li>
                     </ul>
                 </li><!-- /.messages-menu -->
-
+                 
                 <!-- Notifications Menu -->
                 <li class="dropdown notifications-menu">
                     <!-- Menu toggle button -->
@@ -108,9 +110,14 @@
                         </li>
                     </ul>
                 </li>
+--}}
+
+
                 @if (Auth::guest())
-                    <li><a href="{{ url('/register') }}">{{ trans('adminlte_lang::message.register') }}</a></li>
+                    <!-- end task item 
+                    <li><a href="{{ url('/register') }}">{{ trans('adminlte_lang::message.register') }}</a></li>-->
                     <li><a href="{{ url('/login') }}">{{ trans('adminlte_lang::message.login') }}</a></li>
+
                 @else
                     <!-- User Account Menu -->
                     <li class="dropdown user user-menu" id="user_menu" style="max-width: 280px;white-space: nowrap;">
@@ -165,10 +172,11 @@
                     </li>
                 @endif
 
-                <!-- Control Sidebar Toggle Button -->
+                <!-- Control Sidebar Toggle Button 
                 <li>
                     <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
                 </li>
+                -->
             </ul>
         </div>
     </nav>
