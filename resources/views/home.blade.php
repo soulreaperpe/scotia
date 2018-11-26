@@ -28,40 +28,32 @@
 
 
                 <form action="{{ url('/login') }}" method="post">
-               		<div class="form-group">
+               		<div class="form-group proyectos">
                	  		<label>Proyecto</label>
                	  		<select class="form-control">
-               	   			<option>option 1</option>
-               	   			<option>option 2</option>
-               	   			<option>option 3</option>
-               	   			<option>option 4</option>
-               	   			<option>option 5</option>
+               	  			<option value=""></option>
+               	  			@foreach($proyectos as $proyecto)
+               	   				<option value="{{$proyecto->id}}">{{$proyecto->nombre}}</option>
+               	   			@endforeach
                	  		</select>
                		</div>
-               		<div class="form-group">
-               	  		<label>Colaborador</label>
+               		<div class="form-group empleados">
+               	  		<label>Empleado</label>
                	  		<select class="form-control">
-               	   			<option>option 1</option>
-               	   			<option>option 2</option>
-               	   			<option>option 3</option>
-               	   			<option>option 4</option>
-               	   			<option>option 5</option>
                	  		</select>
                		</div>
-               		<div class="form-group">
+               		<div class="form-group turnos">
                	  		<label>Turno</label>
                	  		<select class="form-control">
-               	   			<option>option 1</option>
-               	   			<option>option 2</option>
-               	   			<option>option 3</option>
-               	   			<option>option 4</option>
-               	   			<option>option 5</option>
                	  		</select>
                		</div>
                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
                     <div class="row">
+                        <div class="col-xs-4">
+                            <button type="submit" class="btn btn-primary btn-block btn-flat">Entrada</button>
+                        </div><!-- /.col -->
                         <div class="col-xs-4 col-xs-offset-4">
-                            <button type="submit" class="btn btn-primary btn-block btn-flat">Marcar</button>
+                            <button type="submit" class="btn btn-primary btn-block btn-flat">Salida</button>
                         </div><!-- /.col -->
                     </div>
                 </form>
@@ -73,13 +65,40 @@
     </div>
 
     <script>
-      $(function () {
-        $('input').iCheck({
-          checkboxClass: 'icheckbox_square-blue',
-          radioClass: 'iradio_square-blue',
-          increaseArea: '20%' // optional
-        });
-      });
+    	$(document).ready(function(){
+        	getProyectos();
+    	});
+
+    	function getProyectos() {
+    		
+        };
+
+
+
+			    $(".proyectos select").change(function() {
+					$(".empleados select").empty();
+					$.getJSON('asistencia/marcacion/proyecto/'+$(".proyectos select").val()+'/empleados',function(data){
+					    $.each(data, function(key,value){
+							$(".empleados select").append('<option value="'+value['idEmpleado']+'">'+value['apellidos']+', '+value['nombres']+'</option>');
+					    });
+					});
+			    });
+
+			    $(".proyectos select").change(function() {
+					$(".turnos select").empty();
+					$.getJSON('asistencia/marcacion/proyecto/'+$(".proyectos select").val()+'/turnos',function(data){
+					    $.each(data, function(key,value){
+							$(".turnos select").append('<option value="'+value['id']+'">'+value['codigo']+'</option>');
+					    });
+					});
+			    });
+			
+
+
+
+
+
+
     </script>
     </body>
 

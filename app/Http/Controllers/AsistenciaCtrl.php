@@ -18,9 +18,87 @@ class AsistenciaCtrl extends Controller
     public function index()
     {
         $usersinfo = DB::table('USERINFO')
-        ->select('CardNo as cardid','name as nombre')
-        ->get();
+            ->select('CardNo as cardid','name as nombre')
+            ->get();
         return view('Asistencia.index',compact('usersinfo'));
+    }
+
+
+
+
+    public function getProyectos()
+    {
+        $data = array(); //declaramos un array principal que va contener los datos
+
+        $proyectos = DB::table('proyectos')
+            ->select('id','nombre')
+            ->get();
+
+        $id         = array_column($proyectos, 'id');
+        $nombre       = array_column($proyectos, 'nombre');
+        $count = count($id); 
+
+        for($i=0;$i<$count;$i++){
+            $data[$i] = array(
+                "id"=>$id[$i],  //obligatoriamente "title", "start" y "url" son campos requeridos
+                "nombre"=>$nombre[$i] //por el plugin asi que asignamos a cada uno el valor correspondiente
+            );
+        }
+
+        json_encode($data); //convertimos el array principal $data a un objeto Json 
+       return $data; //para luego retornarlo y estar listo para consumirlo
+    }
+
+    public function getEmpleadosProyecto($idProyecto)
+    {
+        $empleados = DB::table('empleadosproyecto')
+            ->leftJoin('empleados', 'empleadosproyecto.idEmpleado', '=', 'empleados.id')
+            ->select('empleadosproyecto.id',
+                    'empleadosproyecto.idProyecto',
+                    'empleadosproyecto.idEmpleado',
+                    'empleados.nombres',
+                    'empleados.apellidos')
+            ->where('empleadosproyecto.idProyecto', $idProyecto)
+            ->orderBy('empleados.apellidos','asc')
+            ->get();
+        return $empleados->toJson();
+
+    }
+
+
+    public function getTurnosProyecto($idProyecto)
+    {
+        
+        $turnos = DB::table('turnosproyecto')
+            ->leftJoin('turnos', 'turnosproyecto.idTurno', '=', 'turnos.id')
+            ->select('turnos.id',
+                    'turnosproyecto.idProyecto',
+                    'turnosproyecto.idTurno',
+                    'turnos.codigo',
+                    'turnos.descripcion')
+            ->where('turnosproyecto.idProyecto', $idProyecto)
+            ->orderBy('turnos.id','asc')
+            ->get();
+            return $turnos->toJson();
+    }
+
+
+
+
+
+    public function marcacion()
+    {
+        $proyectos = DB::table('proyectos')
+        ->select('id','nombre')
+        ->get();
+        $empleados = DB::table('empleados')
+        ->select('id','nombres','apellidos','activo')
+        //->where('activo',1);
+        ->get();
+        $turnos = DB::table('turnos')
+        ->select('id','codigo')
+        ->get();
+        return view('home',compact('proyectos','empleados','turnos'));
     }
 
     public function listar($fdesde,$fhasta,$cardid)
