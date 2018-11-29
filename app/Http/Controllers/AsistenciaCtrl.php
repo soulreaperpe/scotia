@@ -5,6 +5,9 @@ use App\Http\Requests;
 use Illuminate\Http\Request;
 use App\Models\UserInfo;
 use App\Models\MonitorLog;
+use App\Marcacion;
+use Carbon\Carbon;
+use Validator;
 use Excel;
 use Auth;
 use DB;
@@ -34,19 +37,7 @@ class AsistenciaCtrl extends Controller
             ->select('id','nombre')
             ->get();
 
-        $id         = array_column($proyectos, 'id');
-        $nombre       = array_column($proyectos, 'nombre');
-        $count = count($id); 
-
-        for($i=0;$i<$count;$i++){
-            $data[$i] = array(
-                "id"=>$id[$i],  //obligatoriamente "title", "start" y "url" son campos requeridos
-                "nombre"=>$nombre[$i] //por el plugin asi que asignamos a cada uno el valor correspondiente
-            );
-        }
-
-        json_encode($data); //convertimos el array principal $data a un objeto Json 
-       return $data; //para luego retornarlo y estar listo para consumirlo
+        return $proyectos->toJson();
     }
 
     public function getEmpleadosProyecto($idProyecto)
@@ -83,6 +74,50 @@ class AsistenciaCtrl extends Controller
     }
 
 
+    public function marcar(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'Proyecto' => 'required',
+            'Empleado' => 'required',
+            'Turno' => 'required',
+        ]);
+
+        if ($validator->passes()) {
+
+
+/*GRABAR
+            $now =  date('Y-m-d H:i:s');
+            $marcacion = new Marcacion();       
+            $marcacion->idEmpleado = $request->idEmpleado;
+            $marcacion->idTurno = $request->idEmpleado;
+            $marcacion->entrada = $now;
+            $marcacion->save();
+
+            return response()->json(['success'=>'Se registró correctamente']);
+*/
+
+            $idEmpleado = $request->Empleado;
+/*ACTUALIZAR*/
+            $now =  date('Y-m-d H:i:s');     
+            $marcacion = Marcacion::whereDate('entrada', Carbon::today())->where('idEmpleado',$idEmpleado)->first();  
+            $marcacion->idEmpleado = $request->idEmpleado;
+            $marcacion->idTurno = $request->idEmpleado;
+            $marcacion->salida = $now;
+            $marcacion->save();
+
+            return response()->json(['success'=>'Se registró correctamente']);
+
+
+
+
+
+        } 
+
+        return response()->json(['error'=>$validator->errors()->all()]); 
+
+    }
+
 
 
 
@@ -91,14 +126,7 @@ class AsistenciaCtrl extends Controller
         $proyectos = DB::table('proyectos')
         ->select('id','nombre')
         ->get();
-        $empleados = DB::table('empleados')
-        ->select('id','nombres','apellidos','activo')
-        //->where('activo',1);
-        ->get();
-        $turnos = DB::table('turnos')
-        ->select('id','codigo')
-        ->get();
-        return view('home',compact('proyectos','empleados','turnos'));
+        return view('home',compact('proyectos'));
     }
 
     public function listar($fdesde,$fhasta,$cardid)
