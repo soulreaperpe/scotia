@@ -73,6 +73,21 @@ class AsistenciaCtrl extends Controller
             return $turnos->toJson();
     }
 
+    public function getTipoMarcacion($idEmpleado)
+    {
+
+        $now =  date('Y-m-d H:i:s');     
+        $marcacion = Marcacion::whereDate('entrada', Carbon::today())->where('idEmpleado',$idEmpleado)->first();  
+        if (empty($marcacion)) {
+            $tipoMarcacion = 'Entrada';
+        } else {
+            $tipoMarcacion = 'Salida';
+        }
+        
+        return response()->json(['tipoMarcacion'=>$tipoMarcacion]);
+
+    }
+
 
     public function marcar(Request $request)
     {
@@ -84,8 +99,56 @@ class AsistenciaCtrl extends Controller
         ]);
 
         if ($validator->passes()) {
+            $tipoMarcacion=$request->tipo_marcacion;
+            $idEmpleado = $request->Empleado;
+            $now =  date('Y-m-d H:i:s');
+            if ($tipoMarcacion == 'Entrada') {
+                
 
 
+
+
+
+                $marcacion = new Marcacion();       
+                $marcacion->idEmpleado = $request->Empleado;
+                $marcacion->idTurno = $request->Turno;
+                $marcacion->entrada = $now;
+                $marcacion->save();
+                return response()->json(['success'=>'Se registró correctamente']);
+            } elseif ($tipoMarcacion == 'Salida') {  
+/*//convertimos la fecha 1 a objeto Carbon
+$carbon1 = new \Carbon\Carbon("2018-01-01 00:00:00");
+//convertimos la fecha 2 a objeto Carbon
+$carbon2 = new \Carbon\Carbon("2018-02-02 00:00:00");
+//de esta manera sacamos la diferencia en minutos
+$minutesDiff=$carbon1->diffInMinutes($carbon2);
+*/
+                $marcacion = Marcacion::whereDate('entrada', Carbon::today())->where('idEmpleado',$idEmpleado)->first(); 
+
+                $entrada = $marcacion->entrada;//convertimos la fecha 1 a objeto Carbon
+                $carbon1 = new \Carbon\Carbon($entrada);
+                //convertimos la fecha 2 a objeto Carbon
+                $carbon2 = new \Carbon\Carbon($now);
+                //de esta manera sacamos la diferencia en minutos
+                $minutesDiff=$carbon1->diffInMinutes($carbon2);
+                //$minutesDiff = 542;
+
+                $hEfectivas = $minutesDiff/60;
+                $mEfectivas = $minutesDiff%60;
+                if ($hEfectivas>8) {
+                    --$hEfectivas;
+                }
+
+                $marcacion->idEmpleado = $request->Empleado;
+                $marcacion->idTurno = $request->Empleado;
+                $marcacion->salida = $now;
+
+                $marcacion->horasEfectivas = $hEfectivas;
+                $marcacion->minutosEfectivos = $mEfectivas;
+                $marcacion->save();
+                return response()->json(['success'=>'Se registró correctamente']);
+            } 
+            
 /*GRABAR
             $now =  date('Y-m-d H:i:s');
             $marcacion = new Marcacion();       
@@ -97,8 +160,7 @@ class AsistenciaCtrl extends Controller
             return response()->json(['success'=>'Se registró correctamente']);
 */
 
-            $idEmpleado = $request->Empleado;
-/*ACTUALIZAR*/
+/*ACTUALIZAR
             $now =  date('Y-m-d H:i:s');     
             $marcacion = Marcacion::whereDate('entrada', Carbon::today())->where('idEmpleado',$idEmpleado)->first();  
             $marcacion->idEmpleado = $request->idEmpleado;
@@ -108,10 +170,7 @@ class AsistenciaCtrl extends Controller
 
             return response()->json(['success'=>'Se registró correctamente']);
 
-
-
-
-
+*/
         } 
 
         return response()->json(['error'=>$validator->errors()->all()]); 

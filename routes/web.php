@@ -40,6 +40,7 @@ Route::group(['prefix' => 'asistencia'], function(){
         Route::get('/mes/{mes}/{cardid}/export2excel',['uses' => 'AsistenciaCtrl@exportAsistMes','as'=>'rptMensualExport2Excel']);  
 		// Scotiabank Marcacion
         Route::group(['prefix' => 'marcacion'], function(){
+        	Route::get('/tipoMarcacion/{idEmpleado}',['uses'=>'AsistenciaCtrl@getTipoMarcacion','as'=>'getTipoMarcacion']);
         	Route::post('/marcar',['uses'=>'AsistenciaCtrl@marcar','as'=>'marcar']);
         	Route::get('/proyectos',['uses'=>'AsistenciaCtrl@getProyectos','as'=>'getProyectos']);
         	Route::get('/proyecto/{idProyecto}/empleados',['uses'=>'AsistenciaCtrl@getEmpleadosProyecto','as'=>'getEmpleadosProyecto']);

@@ -8,16 +8,20 @@
     <body class="hold-transition login-page">
     <div id="app" v-cloak>
         <div class="login-box">
-           
-            
-
+        	<div class="login-logo">
+            	<img src="{{asset('/img/logoAlfaGl-2.png')}}" alt="dnp-logo"/>
+                	
+            </div> 
             <div class="login-box-body">
-            	<div class="login-logo">
-                	<a href="#">Marcación<b> | </b>AlfaGl</a>
-            	</div><!-- /.login-logo -->
+            	    	
+<!--
+				<a href="#">Marcación<b> | </b>AlfaGl</a>
+				<img src="{{asset('/img/logoAlfaGl.png')}}" alt="dnp-logo"/>
+/.login-logo -->
             	
-
+				 <p class="login-box-msg"> Marcación</p>
                 <form id="formMarcacion" action="#" method="post">
+                	<input id="tipo_marcacion" name="tipo_marcacion" value="tipoMarcacion" type="hidden" />
                		<div class="form-group proyectos">
                	  		<label>Proyecto</label>
                	  		<select class="form-control" name="Proyecto">
@@ -86,6 +90,7 @@
 
 
 		$(".empleados select").change(function() {
+			$('.marcarEntrada').addClass('invisible');
 			$(".turnos select").empty();
 			$(".turnos select").append('<option value=""></option>');
 
@@ -98,6 +103,17 @@
 						$(".turnos select").append('<option value="'+value['id']+'">'+value['codigo']+'</option>');
 			    	});
 				});
+
+				var idEmpleado = $(".empleados select").val();
+				$.ajax({					
+        			type: 'get',
+        			url: '/asistencia/marcacion/tipoMarcacion/' + idEmpleado,
+        			success: function(data) {
+            			$('#tipo_marcacion').val(data.tipoMarcacion);
+            			$('.marcarEntrada').val(data.tipoMarcacion);
+        			}
+    			});
+
 
 				$('.turnos select').prop("disabled", false);
 
@@ -112,8 +128,7 @@
 
 
 		$(".turnos select").change(function() {	
-			if ($(".proyectos select").val() > 0 && $(".empleados select").val() > 0 && $(".turnos select").val() > 0) {
-
+			if ($(".proyectos select").val() > 0 && $(".empleados select").val() > 0 && $(".turnos select").val() > 0) {				
 				$('.marcarEntrada').removeClass('invisible');
 
 			} else {
@@ -126,27 +141,10 @@
 		});
 
 		$('.marcar').on('click', '.marcarEntrada', function(event){        
-        	event.preventDefault();
-        	var id = $( "#leadID" ).val();        
+        	event.preventDefault();    
         	var data = $( "#formMarcacion" ).serialize();
         	$.post( "asistencia/marcacion/marcar", data, function(data){
-            	if ($.isEmptyObject(data.error)) {
-                	alert(data.success);
-                	listarLeads();
-                	$("#myModalMd").modal("hide");
-            	} else {
-                	//printErrorMsg(data.error);
-                	$(".print-error-msg").find("ul").html('');
-                	$(".print-error-msg").css('display','block');
-                	$.each( data.error, function( key, value ) {
-                    	$(".print-error-msg").find("ul").append('<li>'+value+'</li>');
-                	});
-                	setTimeout(function() {
-                    	$(".print-error-msg").fadeOut(1500);
-                	},3000);
-                	$('.actualizarLead').prop('disabled', false);
-            	}
-
+            	location.reload();
         	});         
     	}); 
 
