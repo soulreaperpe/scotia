@@ -1,11 +1,13 @@
 <table class="table">
 	<thead>
 		<tr>
-			<th>ID Card</th>			
-			<th>Usuario</th>		
-			<th>Evento</th>		
-			<th>Hora</th>	
-			<th>Justificación</th>	
+			<th>Codigo</th>			
+			<th>Empleado</th>		
+			<th>Turno</th>		
+			<th>Entrada</th>	
+			<th>Salida</th>	
+			<th>Tardanza(mins)</th>	
+			<th>Horas Efectivas</th>				
 		</tr>
 	</thead>
 	<tbody>	
@@ -36,7 +38,7 @@
 		<td>
 			<i class="fa fa-dot-circle-o" aria-hidden="true"></i> Pulsador		
 		</td>
-		<td>{{ date('d-m-Y H:i:s', strtotime( $asistencia->time)) }}</td>
+		<td>{{ date('d-m-Y H:i', strtotime( $asistencia->time)) }}</td>
 	@endif
 	<td>{{ $asistencia->description }}</td>
 	</tr>

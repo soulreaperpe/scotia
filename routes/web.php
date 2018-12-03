@@ -22,6 +22,9 @@ Route::get('/', function () {
 Route::get('/',['uses' => 'AsistenciaCtrl@marcacion','as'=>'indexAsistencia']); 
 
 
+Route::get('/pagina', function () {
+    return view('/pagina');
+});
 Route::get('/marcacion', function () {
     return view('/asistencia/marcacion');
 });
@@ -31,6 +34,7 @@ Route::get('/marcacion', function () {
 
 Route::group(['prefix' => 'asistencia'], function(){
         Route::get('/',['uses' => 'AsistenciaCtrl@index','as'=>'indexAsistencia']);  
+        Route::get('/listar/{page?}',['uses' => 'AsistenciaCtrl@listar','as'=>'listarroles']); 
        	Route::get('/{id}/editar',['uses'=>'AsistenciaCtrl@editEvento','as'=>'editarEventoAsis']);
        	Route::post('/{id}/actualizar',['uses'=>'AsistenciaCtrl@actEvento','as'=>'actualizarEventoAsistencia']);
        	Route::get('/reporte/{fdesde}/{fhasta}/{cardid}/{page?}',['uses' => 'AsistenciaCtrl@listar','as'=>'rptAsistencia']);   
@@ -50,6 +54,19 @@ Route::group(['prefix' => 'asistencia'], function(){
 });
 
 
+
+
+
+
+
+ Route::group(['middleware' => 'auth'], function () {
+    //    Route::get('/link1', function ()    {
+//        // Uses Auth Middleware
+//    });
+ 		Route::get('/dashboard',['uses'=>'AsistenciaCtrl@marcacion','as'=>'buscarrol']);
+    //Please do not remove this if you want adminlte:route and adminlte:link commands to works correctly.
+    #adminlte_routes
+
     Route::group(['prefix' => 'proyecto'], function(){
         Route::get('/',['uses' => 'ProyectoCtrl@index','as'=>'roles']);        
         Route::get('/listar/{page?}',['uses' => 'ProyectoCtrl@listar','as'=>'listarroles']);        
@@ -64,7 +81,7 @@ Route::group(['prefix' => 'asistencia'], function(){
 
 
     Route::group(['prefix' => 'empleado'], function(){
-        Route::get('/',['uses' => 'EmpleadoCtrl@indexEmpleadoCtrl','as'=>'roles']);        
+        Route::get('/',['uses' => 'EmpleadoCtrl@index','as'=>'roles']);        
         Route::get('/listar/{page?}',['uses' => 'EmpleadoCtrl@listar','as'=>'listarroles']);        
         Route::get('/nuevo',['uses'=>'EmpleadoCtrl@nuevo','as'=>'nuevorol']);
         Route::post('/grabar',['uses'=>'EmpleadoCtrl@grabar','as'=>'grabarrol']);
@@ -76,7 +93,7 @@ Route::group(['prefix' => 'asistencia'], function(){
     });
 
     Route::group(['prefix' => 'turno'], function(){
-        Route::get('/',['uses' => 'TurnoCtrl@indexEmpleadoCtrl','as'=>'roles']);        
+        Route::get('/',['uses' => 'TurnoCtrl@index','as'=>'roles']);        
         Route::get('/listar/{page?}',['uses' => 'TurnoCtrl@listar','as'=>'listarroles']);        
         Route::get('/nuevo',['uses'=>'TurnoCtrl@nuevo','as'=>'nuevorol']);
         Route::post('/grabar',['uses'=>'TurnoCtrl@grabar','as'=>'grabarrol']);
@@ -90,13 +107,4 @@ Route::group(['prefix' => 'asistencia'], function(){
 
 
 
-
-
- Route::group(['middleware' => 'auth'], function () {
-    //    Route::get('/link1', function ()    {
-//        // Uses Auth Middleware
-//    });
-
-    //Please do not remove this if you want adminlte:route and adminlte:link commands to works correctly.
-    #adminlte_routes
 });

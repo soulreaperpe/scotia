@@ -3,9 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests;
 use Illuminate\Http\Request;
-use App\Models\UserInfo;
-use App\Models\MonitorLog;
-use App\Marcacion;
+use App\Proyecto;
 use Carbon\Carbon;
 use Validator;
 use Excel;
@@ -16,17 +14,21 @@ use Mail;
  * Class HomeController
  * @package App\Http\Controllers
  */
-class AsistenciaCtrl extends Controller
+class ProyectoCtrl extends Controller
 {
     public function index()
     {
-       /* $empleados = DB::table('empleados')
-            ->select('id','nombres','apellidos')
-            ->get();
-        return view('asistencia.index',compact('empleados'));*/
-        return view('asistencia.index');
+        
+        return view('proyecto.index');
     }
 
+    public function listar()
+    {
+        $proyectos = DB::table('proyectos')
+            ->select('id','nombre','descripcion','inicio','fin')
+            ->paginate(10);       
+        return view('proyecto.listar', compact('proyectos'));
+    }
 
 
 
@@ -189,14 +191,12 @@ $minutesDiff=$carbon1->diffInMinutes($carbon2);
         return view('asistencia.marcacion',compact('proyectos'));
     }
 
-    public function listar($idEmpleado)
+    public function listar1($fdesde,$fhasta,$cardid)
     {
-        /**listar($fdesde,$fhasta,$cardid)
         $desde =  strtotime($fdesde);
-        $hasta =  strtotime($fhasta);*/
-
+        $hasta =  strtotime($fhasta);
         if($cardid=='todos'){
-            $marcacions = MonitorLog::leftJoin('USERINFO','acc_monitor_log.card_no','=','USERINFO.CardNo')
+            $asistencias = MonitorLog::leftJoin('USERINFO','acc_monitor_log.card_no','=','USERINFO.CardNo')
                 ->select('acc_monitor_log.card_no as cardid',
                     'USERINFO.name as nombre',
                     'USERINFO.lastname as apellido',
@@ -204,7 +204,10 @@ $minutesDiff=$carbon1->diffInMinutes($carbon2);
                     'acc_monitor_log.event_point_id',
                     'acc_monitor_log.time',
                     'acc_monitor_log.description')
-                ->whereDate('acc_monitor_log.time',Carbon::today())
+                ->where('acc_monitor_log.card_no','!=','')
+                ->where('acc_monitor_log.time','>=',date('Y-m-d 00:00:00.000',$desde))
+                ->where('acc_monitor_log.time','<=',date('Y-m-d 23:59:59.000',$hasta))
+                ->orderBy('acc_monitor_log.time','desc')
                 ->paginate(30);
         }else{
             $asistencias = DB::table('acc_monitor_log')
@@ -217,7 +220,8 @@ $minutesDiff=$carbon1->diffInMinutes($carbon2);
                     'acc_monitor_log.time',
                     'acc_monitor_log.description')
                 ->where('acc_monitor_log.card_no','=',$cardid)
-                ->whereDate('acc_monitor_log.time',Carbon::today())
+                ->where('acc_monitor_log.time','>=',date('Y-m-d 00:00:00.000',$desde))
+                ->where('acc_monitor_log.time','<=',date('Y-m-d 23:59:59.000',$hasta))
                 ->orderBy('acc_monitor_log.time','desc')
                 ->paginate(30);
         }
