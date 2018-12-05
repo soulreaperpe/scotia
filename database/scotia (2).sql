@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost
--- Tiempo de generación: 03-12-2018 a las 08:37:28
+-- Tiempo de generación: 05-12-2018 a las 12:04:37
 -- Versión del servidor: 5.7.19
 -- Versión de PHP: 7.2.11
 
@@ -23,6 +23,36 @@ SET time_zone = "+00:00";
 --
 CREATE DATABASE IF NOT EXISTS `scotia` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
 USE `scotia`;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `diasturno`
+--
+
+CREATE TABLE `diasturno` (
+  `id` int(11) NOT NULL,
+  `idTurno` int(11) NOT NULL,
+  `entrada` time DEFAULT NULL,
+  `salida` time DEFAULT NULL,
+  `dia` int(11) NOT NULL,
+  `activo` tinyint(1) NOT NULL DEFAULT '0',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Volcado de datos para la tabla `diasturno`
+--
+
+INSERT INTO `diasturno` (`id`, `idTurno`, `entrada`, `salida`, `dia`, `activo`, `created_at`, `updated_at`) VALUES
+(1, 1, '09:00:00', '18:00:00', 1, 1, '2018-12-05 06:11:55', NULL),
+(2, 1, '09:00:00', '18:00:00', 2, 1, '2018-12-05 06:11:55', NULL),
+(3, 1, '09:00:00', '18:00:00', 3, 1, '2018-12-05 06:12:56', NULL),
+(4, 1, '09:00:00', '18:00:00', 4, 1, '2018-12-05 06:12:56', NULL),
+(5, 1, '09:00:00', '18:00:00', 5, 1, '2018-12-05 06:12:56', NULL),
+(6, 1, NULL, NULL, 6, 0, '2018-12-05 06:20:28', NULL),
+(7, 1, NULL, NULL, 7, 0, '2018-12-05 06:20:28', NULL);
 
 -- --------------------------------------------------------
 
@@ -111,13 +141,15 @@ INSERT INTO `empleadosproyecto` (`id`, `idProyecto`, `idEmpleado`, `created_at`,
 CREATE TABLE `marcacions` (
   `id` int(10) UNSIGNED NOT NULL,
   `idEmpleado` int(11) NOT NULL,
-  `idTurno` int(11) NOT NULL,
-  `entrada` datetime DEFAULT NULL,
-  `salida` datetime DEFAULT NULL,
-  `minutosTardanza` int(11) DEFAULT NULL,
+  `idTurno` int(11) DEFAULT NULL,
+  `dia` date NOT NULL,
+  `entrada` time DEFAULT NULL,
+  `salida` time DEFAULT NULL,
+  `minutosTardanza` smallint(11) DEFAULT NULL,
   `horasEfectivas` int(11) DEFAULT NULL,
   `minutosEfectivos` int(11) DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
+  `observacion` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -125,26 +157,8 @@ CREATE TABLE `marcacions` (
 -- Volcado de datos para la tabla `marcacions`
 --
 
-INSERT INTO `marcacions` (`id`, `idEmpleado`, `idTurno`, `entrada`, `salida`, `minutosTardanza`, `horasEfectivas`, `minutosEfectivos`, `created_at`, `updated_at`) VALUES
-(1, 1, 1, '2018-11-28 04:50:00', NULL, NULL, NULL, NULL, '2018-11-28 09:50:00', '2018-11-28 09:50:00'),
-(2, 1, 1, '2018-11-28 04:51:55', NULL, NULL, NULL, NULL, '2018-11-28 09:51:55', '2018-11-28 09:51:55'),
-(3, 1, 1, '2018-11-28 04:57:32', NULL, NULL, NULL, NULL, '2018-11-28 09:57:32', '2018-11-28 09:57:32'),
-(4, 2, 2, '2018-11-28 04:57:54', NULL, NULL, NULL, NULL, '2018-11-28 09:57:54', '2018-11-28 09:57:54'),
-(5, 2, 2, '2018-11-29 04:57:58', '2018-11-29 00:47:12', NULL, NULL, NULL, '2018-11-28 09:57:58', '2018-11-29 05:47:12'),
-(6, 4, 4, '2018-11-29 04:58:07', '2018-11-29 00:47:32', NULL, NULL, NULL, '2018-11-28 09:58:07', '2018-11-29 05:47:32'),
-(7, 1, 1, '2018-11-29 04:58:12', '2018-11-29 00:53:34', NULL, NULL, NULL, '2018-11-28 09:58:12', '2018-11-29 05:53:34'),
-(8, 3, 1, '2018-11-29 22:04:42', NULL, NULL, NULL, NULL, '2018-11-30 03:04:42', '2018-11-30 03:04:42'),
-(9, 2, 2, '2018-11-30 02:16:18', '2018-11-30 03:42:38', NULL, 8, 2, '2018-11-30 07:16:18', '2018-11-30 08:42:38'),
-(10, 3, 3, '2018-11-30 02:18:08', '2018-11-30 03:40:15', NULL, 9, 2, '2018-11-30 07:18:08', '2018-11-30 08:40:15'),
-(11, 1, 1, '2018-11-30 02:34:59', '2018-11-30 03:41:26', NULL, 7, 2, '2018-11-30 07:34:59', '2018-11-30 08:41:27'),
-(12, 1, 1, '2018-12-02 20:43:23', '2018-12-02 23:16:35', NULL, 3, 33, '2018-12-03 01:43:24', '2018-12-03 04:16:35'),
-(13, 9, 1, '2018-12-02 23:17:04', NULL, NULL, NULL, NULL, '2018-12-03 04:17:04', '2018-12-03 04:17:04'),
-(14, 18, 1, '2018-12-02 23:18:04', NULL, NULL, NULL, NULL, '2018-12-03 04:18:04', '2018-12-03 04:18:04'),
-(15, 1, 1, '2018-12-03 02:39:23', '2018-12-03 02:40:16', NULL, 0, 0, '2018-12-03 07:39:23', '2018-12-03 07:40:16'),
-(16, 5, 5, '2018-12-03 02:40:03', '2018-12-03 02:40:23', NULL, 0, 0, '2018-12-03 07:40:03', '2018-12-03 07:40:23'),
-(17, 12, 1, '2018-12-03 02:40:34', NULL, NULL, NULL, NULL, '2018-12-03 07:40:34', '2018-12-03 07:40:34'),
-(18, 3, 1, '2018-12-03 02:40:41', NULL, NULL, NULL, NULL, '2018-12-03 07:40:41', '2018-12-03 07:40:41'),
-(19, 11, 11, '2018-12-03 02:40:48', '2018-12-03 02:40:57', NULL, 0, 0, '2018-12-03 07:40:48', '2018-12-03 07:40:57');
+INSERT INTO `marcacions` (`id`, `idEmpleado`, `idTurno`, `dia`, `entrada`, `salida`, `minutosTardanza`, `horasEfectivas`, `minutosEfectivos`, `observacion`, `created_at`, `updated_at`) VALUES
+(38, 1, 1, '2018-12-05', '04:47:51', NULL, 0, NULL, NULL, NULL, '2018-12-05 09:47:51', '2018-12-05 09:47:51');
 
 -- --------------------------------------------------------
 
@@ -286,6 +300,12 @@ INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `re
 --
 
 --
+-- Indices de la tabla `diasturno`
+--
+ALTER TABLE `diasturno`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indices de la tabla `empleados`
 --
 ALTER TABLE `empleados`
@@ -345,6 +365,12 @@ ALTER TABLE `users`
 --
 
 --
+-- AUTO_INCREMENT de la tabla `diasturno`
+--
+ALTER TABLE `diasturno`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
 -- AUTO_INCREMENT de la tabla `empleados`
 --
 ALTER TABLE `empleados`
@@ -360,7 +386,7 @@ ALTER TABLE `empleadosproyecto`
 -- AUTO_INCREMENT de la tabla `marcacions`
 --
 ALTER TABLE `marcacions`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- AUTO_INCREMENT de la tabla `migrations`
