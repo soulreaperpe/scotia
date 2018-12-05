@@ -76,9 +76,8 @@ class AsistenciaCtrl extends Controller
 
     public function getTipoMarcacion($idEmpleado)
     {
-
-        $now =  date('Y-m-d H:i:s');     
-        $marcacion = Marcacion::whereDate('entrada', Carbon::today())->where('idEmpleado',$idEmpleado)->first();  
+        $fecha =  date('Y-m-d');  
+        $marcacion = Marcacion::whereDate('dia', $fecha)->where('idEmpleado',$idEmpleado)->first();
         if (empty($marcacion)) {
             $tipoMarcacion = 'Entrada';
         } else {
@@ -102,18 +101,43 @@ class AsistenciaCtrl extends Controller
         if ($validator->passes()) {
             $tipoMarcacion=$request->tipo_marcacion;
             $idEmpleado = $request->Empleado;
-            $now =  date('Y-m-d H:i:s');
+            $idTurno = $request->Turno;
+            $fecha =  date('Y-m-d');
+            $hora =  date('H:i:s');
             if ($tipoMarcacion == 'Entrada') {
+                $diaSemHoy = 3;
+
+                $entradaTurno = DB::table('diasTurno')
+                                ->where('idTurno',$idTurno)
+                                ->where('dia',$diaSemHoy)
+                                ->where('activo',1)
+                                ->first()
+                                ->entrada;
+
+                if (!is_null($entradaTurno)) {
+
+                    $entrada = new \Carbon\Carbon($hora);
+                    //convertimos la fecha 2 a objeto Carbon
+                    $entradaTurno = new \Carbon\Carbon($entradaTurno);
+                    //de esta manera sacamos la diferencia en minutos                    
+
+                    if ($entrada->greaterThan($entradaTurno)) {
+                        $minutosTardanza=$entrada->diffInMinutes($entradaTurno);
+                    } else {
+                        $minutosTardanza = 0;
+                    }                    
+
+
+                } else {
+                     return response()->json(['error'=>'Marcación Fuera del Turno']);
+                }
                 
-
-
-
-
-
                 $marcacion = new Marcacion();       
                 $marcacion->idEmpleado = $request->Empleado;
-                $marcacion->idTurno = $request->Turno;
-                $marcacion->entrada = $now;
+                $marcacion->idTurno = $idTurno;
+                $marcacion->dia = $fecha;
+                $marcacion->entrada = $hora;
+                $marcacion->minutosTardanza = $minutosTardanza;
                 $marcacion->save();
                 return response()->json(['success'=>'Se registró correctamente']);
             } elseif ($tipoMarcacion == 'Salida') {  
@@ -124,12 +148,12 @@ $carbon2 = new \Carbon\Carbon("2018-02-02 00:00:00");
 //de esta manera sacamos la diferencia en minutos
 $minutesDiff=$carbon1->diffInMinutes($carbon2);
 */
-                $marcacion = Marcacion::whereDate('entrada', Carbon::today())->where('idEmpleado',$idEmpleado)->first(); 
-
-                $entrada = $marcacion->entrada;//convertimos la fecha 1 a objeto Carbon
+                $marcacion = Marcacion::whereDate('dia', $fecha)->where('idEmpleado',$idEmpleado)->first();
+                $entrada = $marcacion->entrada;
+                //convertimos la fecha 1 a objeto Carbon
                 $carbon1 = new \Carbon\Carbon($entrada);
                 //convertimos la fecha 2 a objeto Carbon
-                $carbon2 = new \Carbon\Carbon($now);
+                $carbon2 = new \Carbon\Carbon($hora);
                 //de esta manera sacamos la diferencia en minutos
                 $minutesDiff=$carbon1->diffInMinutes($carbon2);
                 //$minutesDiff = 542;
@@ -140,9 +164,10 @@ $minutesDiff=$carbon1->diffInMinutes($carbon2);
                     --$hEfectivas;
                 }
 
+                 
                 $marcacion->idEmpleado = $request->Empleado;
                 $marcacion->idTurno = $request->Empleado;
-                $marcacion->salida = $now;
+                $marcacion->salida = $hora;
 
                 $marcacion->horasEfectivas = $hEfectivas;
                 $marcacion->minutosEfectivos = $mEfectivas;
