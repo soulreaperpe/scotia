@@ -30,8 +30,6 @@ Route::get('/marcacion', function () {
 });
 
 
-
-
 Route::group(['prefix' => 'asistencia'], function(){
         Route::get('/',['uses' => 'AsistenciaCtrl@index','as'=>'indexAsistencia']);  
         Route::get('/listar/{page?}',['uses' => 'AsistenciaCtrl@listar','as'=>'listarroles']); 
@@ -49,6 +47,11 @@ Route::group(['prefix' => 'asistencia'], function(){
         	Route::get('/proyectos',['uses'=>'AsistenciaCtrl@getProyectos','as'=>'getProyectos']);
         	Route::get('/proyecto/{idProyecto}/empleados',['uses'=>'AsistenciaCtrl@getEmpleadosProyecto','as'=>'getEmpleadosProyecto']);
         	Route::get('/proyecto/{idProyecto}/turnos',['uses'=>'AsistenciaCtrl@getTurnosProyecto','as'=>'getTurnosProyecto']);
+        });
+        // Reporte
+        Route::group(['prefix' => 'reporte'], function(){
+            Route::post('/empleado',['uses'=>'AsistenciaCtrl@reporteEmpleado','as'=>'reporteEmpleado']);
+            
         });
         
 });
@@ -68,7 +71,7 @@ Route::group(['prefix' => 'asistencia'], function(){
     #adminlte_routes
 
     Route::group(['prefix' => 'proyecto'], function(){
-        Route::get('/',['uses' => 'ProyectoCtrl@index','as'=>'roles']);        
+        Route::get('/',['uses' => 'ProyectoCtrl@index','as'=>'proyectos']);        
         Route::get('/listar/{page?}',['uses' => 'ProyectoCtrl@listar','as'=>'listarroles']);        
         Route::get('/nuevo',['uses'=>'ProyectoCtrl@nuevo','as'=>'nuevorol']);
         Route::post('/grabar',['uses'=>'ProyectoCtrl@grabar','as'=>'grabarrol']);

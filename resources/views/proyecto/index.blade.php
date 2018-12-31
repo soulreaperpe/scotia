@@ -24,7 +24,7 @@
                     <div class="row">
                         <div class="col-md-4 col-sm-6 pull-right">
                             <div class="input-group">
-                                <input class="form-control" id="buscarProyecto" type="text">
+                                <input class="form-control" id="buscarProyecto" type="text" onkeyup="buscarProyecto()">
                                     <span class="input-group-addon">
                                         <i class="fa fa-search">
                                         </i>
@@ -34,54 +34,20 @@
                         </div>
                     </div>
                     <div class="row">
-
                         <div class="col-md-12">
-                            <div class="table-responsive" id="ListaProyecto">                    
+                            <div class="table-responsive" id="ListaProyecto">
+                            </div>                    
                         </div>
                     </div>
-
-
                 </div>
-            <!-- /.box -->
+                <!-- ./box-body -->
             </div>
         </div>
-        <!-- /.col -->
     </div>
 
-	<script>  
-	
-	    var listarProyecto = function() {
-	        $.ajax({
-	            type: "get",
-	            url: "/proyecto/listar",
-	            success: function(data) {            
-	                $("#ListaProyecto").empty().html(data);            
-	            }
-	        });
-	    };
-	    
-	    var buscarProyecto = function() {
-	        var x = document.getElementById("buscarProyecto");
-	        x.value = x.value.toUpperCase();
-	        if (x.value == '') {
-	            listarProyecto();
-	        } else {
-	            $.ajax({
-	                type: "get",
-	                url: "/proyecto/buscar/" + x.value,
-	                success: function(data) {
-	                    $("#ListaProyecto").empty().html(data);
-	                }
-	            });
-	        }
-	    };
-	
-	    document.getElementById("buscarProyecto").onkeyup = function() {
-	        buscarProyecto()
-	    };
-	     
+	<script>  	     
 	    $(document).ready(function(){
 	        listarProyecto();
-	    });
+	    });	
 	</script>
 @endsection

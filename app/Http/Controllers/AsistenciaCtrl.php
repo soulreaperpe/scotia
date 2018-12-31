@@ -3,8 +3,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests;
 use Illuminate\Http\Request;
-use App\Models\UserInfo;
-use App\Models\MonitorLog;
 use App\Marcacion;
 use Carbon\Carbon;
 use Validator;
@@ -29,11 +27,20 @@ class AsistenciaCtrl extends Controller
 
 
 
+    public function marcacion()
+    {
+        /*$proyectos = DB::table('proyectos')
+        ->select('id','nombre')
+        ->get();
+        return view('asistencia.marcacion',compact('proyectos'));*/
+        return view('asistencia.marcacion');
+    }
+
+
+
 
     public function getProyectos()
     {
-        $data = array(); //declaramos un array principal que va contener los datos
-
         $proyectos = DB::table('proyectos')
             ->select('id','nombre')
             ->get();
@@ -102,23 +109,46 @@ class AsistenciaCtrl extends Controller
             $tipoMarcacion=$request->tipo_marcacion;
             $idEmpleado = $request->Empleado;
             $idTurno = $request->Turno;
-            $fecha =  date('Y-m-d');
+            $fecha =  Carbon::now()->format('Y-m-d');
             $hora =  date('H:i:s');
             if ($tipoMarcacion == 'Entrada') {
-                $diaSemHoy = 3;
+                $diaSemHoy = date('N'); //dia de sem como numero e. lunes = 1
+                $anio =  date('Y');
+                $mes =  date('m');
+                //Rellenar marcaciones de dias anteriores del mes
+                //ultima marcacion del mes
+                $lastMarcacion = Marcacion::where('idEmpleado',$idEmpleado)
+                                ->whereYear('dia',$anio) 
+                                ->whereMonth('dia',$mes) 
+                                ->orderBy('dia', 'desc')
+                                ->first();
+                if (!is_null($lastMarcacion)) {
+                    $lastMarcacion = Carbon::createFromFormat('Y-m-d',$lastMarcacion->dia);
+                } else {
+                    $lastMarcacion = Carbon::createFromDate($anio, $mes, 1);
+                }
+                
+                //Registra marcaciones vacias del mes
+                while ($lastMarcacion->lessThan($fecha)) {
+                    $marcacion = new Marcacion();  
+                    $marcacion->idEmpleado = $request->Empleado;
+                    $marcacion->dia = $lastMarcacion;
+                    $marcacion->save(); 
+                    $lastMarcacion->addDay(); 
+                }
+                
 
                 $entradaTurno = DB::table('diasTurno')
                                 ->where('idTurno',$idTurno)
                                 ->where('dia',$diaSemHoy)
                                 ->where('activo',1)
-                                ->first()
-                                ->entrada;
+                                ->first();
 
                 if (!is_null($entradaTurno)) {
 
                     $entrada = new \Carbon\Carbon($hora);
                     //convertimos la fecha 2 a objeto Carbon
-                    $entradaTurno = new \Carbon\Carbon($entradaTurno);
+                    $entradaTurno = new \Carbon\Carbon($entradaTurno->entrada);
                     //de esta manera sacamos la diferencia en minutos                    
 
                     if ($entrada->greaterThan($entradaTurno)) {
@@ -138,16 +168,17 @@ class AsistenciaCtrl extends Controller
                 $marcacion->dia = $fecha;
                 $marcacion->entrada = $hora;
                 $marcacion->minutosTardanza = $minutosTardanza;
+                $marcacion->observacion = $diaSemHoy;
                 $marcacion->save();
                 return response()->json(['success'=>'Se registró correctamente']);
             } elseif ($tipoMarcacion == 'Salida') {  
-/*//convertimos la fecha 1 a objeto Carbon
-$carbon1 = new \Carbon\Carbon("2018-01-01 00:00:00");
-//convertimos la fecha 2 a objeto Carbon
-$carbon2 = new \Carbon\Carbon("2018-02-02 00:00:00");
-//de esta manera sacamos la diferencia en minutos
-$minutesDiff=$carbon1->diffInMinutes($carbon2);
-*/
+                /*//convertimos la fecha 1 a objeto Carbon
+                $carbon1 = new \Carbon\Carbon("2018-01-01 00:00:00");
+                //convertimos la fecha 2 a objeto Carbon
+                $carbon2 = new \Carbon\Carbon("2018-02-02 00:00:00");
+                //de esta manera sacamos la diferencia en minutos
+                $minutesDiff=$carbon1->diffInMinutes($carbon2);
+                */
                 $marcacion = Marcacion::whereDate('dia', $fecha)->where('idEmpleado',$idEmpleado)->first();
                 $entrada = $marcacion->entrada;
                 //convertimos la fecha 1 a objeto Carbon
@@ -163,10 +194,7 @@ $minutesDiff=$carbon1->diffInMinutes($carbon2);
                 if ($hEfectivas>8) {
                     --$hEfectivas;
                 }
-
                  
-                $marcacion->idEmpleado = $request->Empleado;
-                $marcacion->idTurno = $request->Empleado;
                 $marcacion->salida = $hora;
 
                 $marcacion->horasEfectivas = $hEfectivas;
@@ -175,28 +203,28 @@ $minutesDiff=$carbon1->diffInMinutes($carbon2);
                 return response()->json(['success'=>'Se registró correctamente']);
             } 
             
-/*GRABAR
-            $now =  date('Y-m-d H:i:s');
-            $marcacion = new Marcacion();       
-            $marcacion->idEmpleado = $request->idEmpleado;
-            $marcacion->idTurno = $request->idEmpleado;
-            $marcacion->entrada = $now;
-            $marcacion->save();
+    /*GRABAR
+                $now =  date('Y-m-d H:i:s');
+                $marcacion = new Marcacion();       
+                $marcacion->idEmpleado = $request->idEmpleado;
+                $marcacion->idTurno = $request->idEmpleado;
+                $marcacion->entrada = $now;
+                $marcacion->save();
 
-            return response()->json(['success'=>'Se registró correctamente']);
-*/
+                return response()->json(['success'=>'Se registró correctamente']);
+    */
 
-/*ACTUALIZAR
-            $now =  date('Y-m-d H:i:s');     
-            $marcacion = Marcacion::whereDate('entrada', Carbon::today())->where('idEmpleado',$idEmpleado)->first();  
-            $marcacion->idEmpleado = $request->idEmpleado;
-            $marcacion->idTurno = $request->idEmpleado;
-            $marcacion->salida = $now;
-            $marcacion->save();
+    /*ACTUALIZAR
+                $now =  date('Y-m-d H:i:s');     
+                $marcacion = Marcacion::whereDate('entrada', Carbon::today())->where('idEmpleado',$idEmpleado)->first();  
+                $marcacion->idEmpleado = $request->idEmpleado;
+                $marcacion->idTurno = $request->idEmpleado;
+                $marcacion->salida = $now;
+                $marcacion->save();
 
-            return response()->json(['success'=>'Se registró correctamente']);
+                return response()->json(['success'=>'Se registró correctamente']);
 
-*/
+    */
         } 
 
         return response()->json(['error'=>$validator->errors()->all()]); 
@@ -205,14 +233,31 @@ $minutesDiff=$carbon1->diffInMinutes($carbon2);
 
 
 
-
-    public function marcacion()
+    public function reporteEmpleado(Request $request)
     {
-        $proyectos = DB::table('proyectos')
-        ->select('id','nombre')
-        ->get();
-        return view('asistencia.marcacion',compact('proyectos'));
+        /*
+        $validator = Validator::make($request->all(), [
+            'Empleado' => 'required',
+            'Mes' => 'required',
+        ]);
+
+        if ($validator->passes()) {
+
+  
+        } */
+        $idEmpleado = $request->Empleado;
+        $anio =  date('Y');
+        $mes =  date('m');
+
+        $marcacions = Marcacion::where('idEmpleado', $idEmpleado)
+                    ->whereYear('dia',$anio)
+                    ->whereMonth('dia',$mes)
+                    ->get();
+
+        return view('asistencia.reporteEmpleado', compact('marcacions'));
+
     }
+
 
     public function listar($idEmpleado)
     {

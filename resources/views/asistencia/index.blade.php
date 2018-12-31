@@ -6,50 +6,57 @@
 
 @section('main-content')
     <div class="row">
-        <div class="col-md-12">            
+        <div class="col-md-12">    
             <div class="box box-primary">
                 <div class="box-header with-border">
-                  <i class="fa fa-users"></i><h3 class="box-title"> Asistencia</h3>
-                  <div class="box-tools pull-right">
-                    <a href="#" onclick="nuevaMarcacion()">
-                        <i class="fa fa-plus">
-                        </i>
-                        <span>
-                            Marcar
-                        </span>
-                    </a>
-                  </div>
+                  <i class="fa fa-briefcase"></i><h3 class="box-title">Asistencia</h3>             
                 </div>
-                <div class="box-body">  
+                <div class="box-body">
                     <div class="row">
-                        <div class="col-md-12">
-                            <div class="table-responsive" id="ListaAsistencia">                    
+                      <div class="col-md-3">
+                          <label for="fdesde">Desde</label>
+                        <div class='input-group'>
+                            <input type='text' class="form-control datepicker" id="fdesde" name="fdesde"/>
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                      </div>
+                      <div class="col-md-3">
+                            <label for="fhasta">Hasta</label>
+                        <div class='input-group '>
+                            <input type='text' class="form-control datepicker" id="fhasta" name="fhasta"/>
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                      </div>
+                      <div class="col-md-3">
+                            <label for="cardid">Usuario</label>
+                            <select id="cardid" name="cardid" class="form-control">
+                                <option value="todos">Todos</option>
+                            </select>
+                      </div>
+                      <div class="col-md-3">
+                            <div class="form-group">
+                                <br>
+                                <button class="btn btn-primary" type="submit">
+                                    Reporte
+                                </button>
+                            </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                        <div id="asistencias" class="col-md-12 table-responsive">                            
                         </div>
                     </div>
-
-
+                  <!-- /.row -->
                 </div>
-            <!-- /.box -->
-            </div>
+                <!-- ./box-body -->
+            </div> 
         </div>
-        <!-- /.col -->
     </div>
 
-    <script>  
-    
-        var listarAsistencia = function() {
-            $.ajax({
-                type: "get",
-                url: "/asistencia/listar",
-                success: function(data) {            
-                    $("#ListaAsistencia").empty().html(data);            
-                }
-            });
-        };        
-    
-         
-        $(document).ready(function(){
-            listarAsistencia();
-        });
+    <script>       
     </script>
 @endsection

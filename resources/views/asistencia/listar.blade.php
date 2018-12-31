@@ -11,7 +11,7 @@
 		</tr>
 	</thead>
 	<tbody>	
-@if(count($asistencias)>0)	
+@if(!empty($asistencias))	
 	
 	@foreach($asistencias as $asistencia)
 	<tr>

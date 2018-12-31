@@ -24,7 +24,7 @@
                     <div class="row">
                         <div class="col-md-4 col-sm-6 pull-right">
                             <div class="input-group">
-                                <input class="form-control" id="buscarEmpleado" type="text">
+                                <input class="form-control" id="buscarEmpleado" type="text" onkeyup="buscarEmpleado()">
                                     <span class="input-group-addon">
                                         <i class="fa fa-search">
                                         </i>
@@ -49,39 +49,8 @@
     </div>
 
 	<script>  
-	
-	    var listarEmpleado = function() {
-	        $.ajax({
-	            type: "get",
-	            url: "/empleado/listar",
-	            success: function(data) {            
-	                $("#ListaEmpleado").empty().html(data);            
-	            }
-	        });
-	    };
-	    
-	    var buscarEmpleado = function() {
-	        var x = document.getElementById("buscarEmpleado");
-	        x.value = x.value.toUpperCase();
-	        if (x.value == '') {
-	            listarEmpleado();
-	        } else {
-	            $.ajax({
-	                type: "get",
-	                url: "/empleado/buscar/" + x.value,
-	                success: function(data) {
-	                    $("#ListaEmpleado").empty().html(data);
-	                }
-	            });
-	        }
-	    };
-	
-	    document.getElementById("buscarEmpleado").onkeyup = function() {
-	        buscarEmpleado()
-	    };
-	     
 	    $(document).ready(function(){
 	        listarEmpleado();
-	    });
+	    });	     
 	</script>
 @endsection

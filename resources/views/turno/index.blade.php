@@ -24,7 +24,7 @@
                     <div class="row">
                         <div class="col-md-4 col-sm-6 pull-right">
                             <div class="input-group">
-                                <input class="form-control" id="buscarTurno" type="text">
+                                <input class="form-control" id="buscarTurno" type="text" onkeyup="buscarTurno()">
                                     <span class="input-group-addon">
                                         <i class="fa fa-search">
                                         </i>
@@ -48,40 +48,9 @@
         <!-- /.col -->
     </div>
 
-	<script>  
-	
-	    var listarTurno = function() {
-	        $.ajax({
-	            type: "get",
-	            url: "/turno/listar",
-	            success: function(data) {            
-	                $("#ListaTurno").empty().html(data);            
-	            }
-	        });
-	    };
-	    
-	    var buscarTurno = function() {
-	        var x = document.getElementById("buscarTurno");
-	        x.value = x.value.toUpperCase();
-	        if (x.value == '') {
-	            listarTurno();
-	        } else {
-	            $.ajax({
-	                type: "get",
-	                url: "/turno/buscar/" + x.value,
-	                success: function(data) {
-	                    $("#ListaTurno").empty().html(data);
-	                }
-	            });
-	        }
-	    };
-	
-	    document.getElementById("buscarTurno").onkeyup = function() {
-	        buscarTurno()
-	    };
-	     
+	<script>  		
 	    $(document).ready(function(){
 	        listarTurno();
-	    });
+	    });	
 	</script>
 @endsection

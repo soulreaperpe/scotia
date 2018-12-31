@@ -6,10 +6,11 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <link href="{{ mix('/css/all.css') }}" rel="stylesheet" type="text/css" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+    
 
+    <!-- Date Picker CSS -->
+    <link href="{{ asset('/css/bootstrap-datepicker3.min.css') }}" rel="stylesheet"/>  
+    
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -21,6 +22,7 @@
           href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 
     <script>
+
         //See https://laracasts.com/discuss/channels/vue/use-trans-in-vuejs
         window.trans = @php
             // copy all translations from /resources/lang/CURRENT_LOCALE/* to global JS variable

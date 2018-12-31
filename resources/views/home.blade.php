@@ -47,8 +47,11 @@
 					</div>
                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
                     <div class="row">
-                        <div class="col-xs-4 marcar">
-                        	<input class="btn btn-primary btn-block btn-flat marcarEntrada invisible" type="button" value="Entrada">
+                        <div class="col-xs-4 marcacion">
+                          <input class="btn btn-primary btn-block btn-flat marcar invisible" type="button" value="Entrada">
+                        </div><!-- /.col -->
+                        <div class="col-xs-4 reporte">
+                        	<input class="btn btn-primary btn-block btn-flat getReporte invisible" type="button" value="Reporte">
                         </div><!-- /.col -->
                     </div>
                 </form>
@@ -63,97 +66,6 @@
     	$(document).ready(function() {
     		$('.select2').select2();
 		});
-
-		$(".proyectos select").change(function() {	
-			$(".empleados select").empty();
-			if ($(".proyectos select").val() > 0) {
-    			
-				$(".empleados select").append('<option selected="true" disabled="disabled">Elegir Empleado</option>');		
-			$.getJSON('asistencia/marcacion/proyecto/'+$(".proyectos select").val()+'/empleados',function(data){				
-			    $.each(data, function(key,value){
-					$(".empleados select").append('<option value="'+value['idEmpleado']+'">'+value['apellidos']+', '+value['nombres']+'</option>');
-			    });
-			});
-			$('.empleados select').prop("disabled", false);
-
-
-
-
-
-
-			} else {
-
-				$('.empleados select').prop("disabled", true);
-				$('.turnos select').prop("disabled", true);
-				$(".empleados select").empty();
-				$(".turnos select").empty();
-				$('.marcarEntrada').addClass('invisible');
-
-			}
-			
-		});
-
-
-		$(".empleados select").change(function() {
-			$('.marcarEntrada').addClass('invisible');
-			$(".turnos select").empty();
-			$(".turnos select").append('<option selected="true" disabled="disabled">Elegir Turno</option>');
-
-			if ($(".proyectos select").val() > 0 && $(".empleados select").val() > 0) {
-
-
-				$.getJSON('asistencia/marcacion/proyecto/'+$(".proyectos select").val()+'/turnos',function(data){
-			    	$.each(data, function(key,value){
-						$(".turnos select").append('<option value="'+value['id']+'">'+value['codigo']+'</option>');
-			    	});
-				});
-
-				var idEmpleado = $(".empleados select").val();
-				$.ajax({					
-        			type: 'get',
-        			url: '/asistencia/marcacion/tipoMarcacion/' + idEmpleado,
-        			success: function(data) {
-            			$('#tipo_marcacion').val(data.tipoMarcacion);
-            			$('.marcarEntrada').val(data.tipoMarcacion);
-        			}
-    			});
-
-
-				$('.turnos select').prop("disabled", false);
-
-			} else {
-
-				$('.turnos select').prop("disabled", true);
-				$('.marcarEntrada').addClass('invisible');
-
-			}
-
-		});
-
-
-		$(".turnos select").change(function() {	
-			if ($(".proyectos select").val() > 0 && $(".empleados select").val() > 0 && $(".turnos select").val() > 0) {				
-				$('.marcarEntrada').removeClass('invisible');
-
-			} else {
-
-				$('.marcarEntrada').addClass('invisible');
-
-			}
-
-			 
-		});
-
-		$('.marcar').on('click', '.marcarEntrada', function(event){        
-        	event.preventDefault();    
-        	var data = $( "#formMarcacion" ).serialize();
-        	$.post( "asistencia/marcacion/marcar", data, function(data){
-            	location.reload();
-        	});         
-    	}); 
-
-
-
 
     </script>
     </body>

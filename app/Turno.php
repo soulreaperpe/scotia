@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Marcacion extends Model
+class Turno extends Model
 {
     
     protected $table = 'turnos';
