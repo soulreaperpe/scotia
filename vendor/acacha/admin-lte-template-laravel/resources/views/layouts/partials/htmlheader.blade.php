@@ -6,11 +6,12 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <link href="{{ mix('/css/all.css') }}" rel="stylesheet" type="text/css" />
-    
+    <!-- jQuery 3.3.1 -->    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
     <!-- Date Picker CSS -->
-    <link href="{{ asset('/css/bootstrap-datepicker3.min.css') }}" rel="stylesheet"/>  
-    
+    <link href="{{ asset('/css/bootstrap-datepicker3.min.css') }}" rel="stylesheet"/>      
+
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>

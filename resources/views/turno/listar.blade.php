@@ -13,7 +13,7 @@
   <tr>
     <td><a href="#" onclick="infoLead({{ $turno->id }})">{{ $turno->codigo }}</a></td>
     <td>{{ $turno->descripcion }}</td>
-    <td>{{  date("d-m-y",strtotime($turno->created_at)) }}</td>
+    <td>{{  date("d-m-Y",strtotime($turno->created_at)) }}</td>
   </tr>
   @endforeach
   </tbody>
@@ -25,6 +25,6 @@
       <h5>No hay resultados</h5>
   </div>
 @endif
-<div align="center" id="pg-turno">
+<div align="center" id="pg-turnos">
     {{ $turnos->links() }}
 </div>

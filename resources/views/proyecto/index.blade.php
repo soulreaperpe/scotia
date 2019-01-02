@@ -22,6 +22,8 @@
                 </div>
                 <div class="box-body">  
                     <div class="row">
+                    	<div class="col-md-4 col-sm-6 alert alert-success print-success-msg" style="display: none;">
+                    	</div>
                         <div class="col-md-4 col-sm-6 pull-right">
                             <div class="input-group">
                                 <input class="form-control" id="buscarProyecto" type="text" onkeyup="buscarProyecto()">

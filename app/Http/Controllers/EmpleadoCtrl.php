@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests;
 use Illuminate\Http\Request;
 use App\Empleado;
+use App\EmpleadosProyecto;
 use Carbon\Carbon;
 use Validator;
 use Excel;
@@ -28,7 +29,7 @@ class EmpleadoCtrl extends Controller
             ->leftJoin('empleadosproyecto', 'empleados.id', '=', 'empleadosproyecto.idEmpleado')
             ->leftJoin('proyectos', 'empleadosproyecto.idProyecto', '=', 'proyectos.id')
             ->select('empleados.id','empleados.codigo','empleados.nombres','empleados.apellidos','empleados.activo','empleados.created_at','proyectos.id as idProyecto','proyectos.nombre as proyecto')
-            ->paginate(20);       
+            ->paginate(10);       
         return view('empleado.listar', compact('empleados'));
     }
 
@@ -93,7 +94,8 @@ class EmpleadoCtrl extends Controller
             ->leftJoin('empleadosproyecto', 'empleados.id', '=', 'empleadosproyecto.idEmpleado')
             ->leftJoin('proyectos', 'empleadosproyecto.idProyecto', '=', 'proyectos.id')
             ->select('empleados.id','empleados.codigo','empleados.nombres','empleados.apellidos','empleados.activo','empleados.created_at','proyectos.id as idProyecto','proyectos.nombre as proyecto')
-            ->where('empleados.nombres', 'LIKE', '%'.$consulta.'%')
+            ->where('empleados.codigo', 'LIKE', '%'.$consulta.'%')
+            ->orwhere('empleados.nombres', 'LIKE', '%'.$consulta.'%')
             ->orwhere('empleados.apellidos', 'LIKE', '%'.$consulta.'%')
             ->orwhere('proyectos.nombre', 'LIKE', '%'.$consulta.'%')
             ->orderBy('empleados.created_at','desc')
@@ -104,38 +106,49 @@ class EmpleadoCtrl extends Controller
 
     public function nuevo()
     {
-        $empleados = User::where('idRol','<=','3')->where('estado',1)->get();
-        return view('empleado.nuevo',compact('empleados'));
+        
+        return view('empleado.nuevo');
     }
 
     public function editar($id)
     {
-        $lead = Lead::find($id);
-        $empleados = User::where('idRol','<=','3')->where('estado',1)->get();
-        return view('empleado.editar', compact('lead','empleados'));
+        $empleado = Empleado::find($id);
+        $proyectos = $proyectos = DB::table('proyectos')
+            ->select('id','nombre')
+            ->get();
+        $empleadosproyecto = EmpleadosProyecto::where('idEmpleado',$id)
+            ->first();
+        return view('empleado.editar', compact('empleado','proyectos','empleadosproyecto'));
     }
 
     public function grabar(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'Nombre' => 'required',
-            'Correo' => 'required|email|unique:leads',
+            'Nombres' => 'required',
+            'Apellidos' => 'required',
+            'Proyecto' => 'required',
         ]);
 
         if ($validator->passes()) {
+            $nombres = $request->Nombres;
+            $apellidos = $request->Apellidos;
+            $idProyecto = $request->Proyecto;
 
-            $idUsuario = Auth::user()->id;
-            $now =  strtotime($request->fec_fech_inic);
-            $lead = new Empleado();
-            $lead->UsuarioID = $request->UsuarioID;
-            $lead->Nombre = $request->Nombre;
-            $lead->Correo = $request->Correo;
-            $lead->Empresa = $request->Empresa;
-            $lead->Comentario = $request->Comentario;
-            $lead->Requerimientos = $request->Requerimientos;
-            $lead->cod_usua_crea = $idUsuario;
-            $lead->created_at = date('Y-m-d H:i:s');  
-            $lead->save();
+            $empleado = new Empleado();
+            $empleado->codigo = $request->Codigo;
+            $empleado->nombres = $nombres;
+            $empleado->apellidos = $apellidos;
+            $empleado->created_at = date('Y-m-d H:i:s');  
+            $empleado->save();
+
+            $idEmpleado = Empleado::where('nombres',$nombres)
+                        ->where('apellidos',$apellidos)->first()->id;
+
+            $empleado = new EmpleadosProyecto();
+            $empleado->idProyecto = $idProyecto;
+            $empleado->idEmpleado = $idEmpleado;
+            $empleado->created_at = date('Y-m-d H:i:s');  
+            $empleado->save();
 
             return response()->json(['success'=>'Se registró correctamente']);
 
@@ -147,41 +160,45 @@ class EmpleadoCtrl extends Controller
     public function actualizar(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'Nombre' => 'required',
-            'Correo' => 'required|email',
+            'Nombres' => 'required',
+            'Apellidos' => 'required',
+            'Proyecto' => 'required',
         ]);
 
         if ($validator->passes()) {
+            $nombres = $request->Nombres;
+            $apellidos = $request->Apellidos;
+            $idProyecto = $request->Proyecto;
 
-            $idUsuario = Auth::user()->id;
-            $now =  strtotime($request->fec_fech_inic);
-            $lead = Lead::find($request->leadID);
-            $lead->UsuarioID = $request->UsuarioID;
-            $lead->Nombre = $request->Nombre;
-            $lead->Correo = $request->Correo;
-            $lead->Empresa = $request->Empresa;
-            $lead->Comentario = $request->Comentario;
-            $lead->Requerimientos = $request->Requerimientos;
-            $lead->cod_usua_modi = $idUsuario;
-            $lead->updated_at = date('Y-m-d H:i:s'); 
-            $lead->save();
+            $empleado = Empleado::find($id);
+            $empleado->codigo = $request->Codigo;
+            $empleado->nombres = $nombres;
+            $empleado->apellidos = $apellidos;
+            $empleado->updated_at = date('Y-m-d H:i:s');  
+            $empleado->save();
 
-            return response()->json(['success'=>'Se actualizó correctamente']);
+            $empleado = EmpleadosProyecto::find($id);
+            $empleado->idProyecto = $idProyecto;
+            $empleado->updated_at = date('Y-m-d H:i:s');  
+            $empleado->save();
+
+            return response()->json(['success'=>'Se registró correctamente']);
 
         } 
 
-        return response()->json(['error'=>$validator->errors()->all()]); 
+        return response()->json(['error'=>$validator->errors()->all()]);  
     }
+
 
     public function eliminar($id)
     {
-        $proyecto = Proyecto::find($id)->delete();
+        $empleado = Proyecto::find($id)->delete();
     }
 
     public function info($id)
     {
 
-        $proyecto = Lead::leftJoin('users as u', 'leads.UsuarioID','=','u.id')
+        $empleado = Lead::leftJoin('users as u', 'leads.UsuarioID','=','u.id')
             ->select('leads.id',
                 'leads.Nombre',
                 'leads.Correo',
@@ -194,7 +211,7 @@ class EmpleadoCtrl extends Controller
             ->where('leads.id',$id)
             ->first();
 
-        return view('proyecto.infoProyecto',compact('proyecto'));
+        return view('empleado.infoEmpleado',compact('empleado'));
     }
 
 

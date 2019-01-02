@@ -47,6 +47,6 @@
 
 	</tbody>
 </table>
-<div class="box-footer" align="center"  id="pg-asist">
+<div class="box-footer" align="center"  id="pg-asistenecias">
     {{ $asistencias->links() }}
  </div>

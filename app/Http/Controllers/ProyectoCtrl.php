@@ -26,6 +26,7 @@ class ProyectoCtrl extends Controller
     {
         $proyectos = DB::table('proyectos')
             ->select('id','nombre','descripcion','inicio','fin')
+            ->orderBy('created_at','desc')
             ->paginate(10);       
         return view('proyecto.listar', compact('proyectos'));
     }
@@ -62,38 +63,34 @@ class ProyectoCtrl extends Controller
 
     public function nuevo()
     {
-        $usuarios = User::where('idRol','<=','3')->where('estado',1)->get();
-        return view('proyecto.nuevo',compact('usuarios'));
+        
+        return view('proyecto.nuevo');
     }
 
     public function editar($id)
     {
-        $lead = Lead::find($id);
-        $usuarios = User::where('idRol','<=','3')->where('estado',1)->get();
-        return view('Leads.editar', compact('lead','usuarios'));
+        $proyecto = Proyecto::find($id);
+        return view('proyecto.editar', compact('proyecto'));
     }
 
     public function grabar(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'Nombre' => 'required',
-            'Correo' => 'required|email|unique:leads',
+            'Proyecto' => 'required',
+            'Inicio' => 'required',
         ]);
 
         if ($validator->passes()) {
+            $inicio = Carbon::createFromFormat('d-m-Y',$request->Inicio);
+            $fin = Carbon::createFromFormat('d-m-Y',$request->Fin);
 
-            $idUsuario = Auth::user()->id;
-            $now =  strtotime($request->fec_fech_inic);
-            $lead = new Lead();
-            $lead->UsuarioID = $request->UsuarioID;
-            $lead->Nombre = $request->Nombre;
-            $lead->Correo = $request->Correo;
-            $lead->Empresa = $request->Empresa;
-            $lead->Comentario = $request->Comentario;
-            $lead->Requerimientos = $request->Requerimientos;
-            $lead->cod_usua_crea = $idUsuario;
-            $lead->created_at = date('Y-m-d H:i:s');  
-            $lead->save();
+            $proyecto = new Proyecto();
+            $proyecto->nombre = $request->Proyecto;
+            $proyecto->inicio = $inicio;
+            $proyecto->fin = $fin;
+            $proyecto->descripcion = $request->Descripcion;
+            $proyecto->created_at = date('Y-m-d H:i:s');  
+            $proyecto->save();
 
             return response()->json(['success'=>'Se registró correctamente']);
 
@@ -105,24 +102,21 @@ class ProyectoCtrl extends Controller
     public function actualizar(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'Nombre' => 'required',
-            'Correo' => 'required|email',
+            'Proyecto' => 'required',
+            'Inicio' => 'required',
         ]);
 
         if ($validator->passes()) {
+            $inicio = Carbon::createFromFormat('d-m-Y',$request->Inicio);
+            $fin = Carbon::createFromFormat('d-m-Y',$request->Fin);
 
-            $idUsuario = Auth::user()->id;
-            $now =  strtotime($request->fec_fech_inic);
-            $lead = Lead::find($request->leadID);
-            $lead->UsuarioID = $request->UsuarioID;
-            $lead->Nombre = $request->Nombre;
-            $lead->Correo = $request->Correo;
-            $lead->Empresa = $request->Empresa;
-            $lead->Comentario = $request->Comentario;
-            $lead->Requerimientos = $request->Requerimientos;
-            $lead->cod_usua_modi = $idUsuario;
-            $lead->updated_at = date('Y-m-d H:i:s'); 
-            $lead->save();
+            $proyecto = Proyecto::find($id);
+            $proyecto->nombre = $request->Proyecto;
+            $proyecto->inicio = $inicio;
+            $proyecto->fin = $fin;
+            $proyecto->descripcion = $request->Descripcion;
+            $proyecto->updated_at = date('Y-m-d H:i:s'); 
+            $proyecto->save();
 
             return response()->json(['success'=>'Se actualizó correctamente']);
 

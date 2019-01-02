@@ -6,6 +6,7 @@
     <th>Descripcion</th>
     <th>Inicio</th>
     <th>Fin</th>
+    <th></th>
   </tr>
   </thead>
   <tbody>
@@ -14,13 +15,18 @@
   <tr>
     <td><a href="#" onclick="infoProyecto(<?php echo e($proyecto->id); ?>)"><?php echo e($proyecto->nombre); ?></a></td>
     <td><?php echo e($proyecto->descripcion); ?></td>
-    <td><?php echo e(date("d-m-y",strtotime($proyecto->inicio))); ?></td>
-    <td><?php echo e(date("d-m-y",strtotime($proyecto->fin))); ?></td>
+    <td><?php echo e(date("d-m-Y",strtotime($proyecto->inicio))); ?></td>
+    <td><?php echo e(date("d-m-Y",strtotime($proyecto->fin))); ?></td>
+    <td>
+      <a href="#" onclick="editarProyecto(<?php echo e($proyecto->id); ?>)">
+         <i class="fa fa-fw fa-pencil"></i>
+      </a>
+    </td>
   </tr>
   <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
   </tbody>
 </table>
-<div align="center" id="pg-proyecto">
+<div align="center" id="pg-proyectos">
     <?php echo e($proyectos->links()); ?>
 
 </div>

@@ -16,7 +16,7 @@
                       <div class="col-md-3">
                           <label for="fdesde">Desde</label>
                         <div class='input-group'>
-                            <input type='text' class="form-control datepicker" id="fdesde" name="fdesde"/>
+                            <input type='text' class="form-control datepicker" id="fechaDesde" name="fdesde"/>
                             <span class="input-group-addon">
                                 <span class="glyphicon glyphicon-calendar"></span>
                             </span>
@@ -25,7 +25,7 @@
                       <div class="col-md-3">
                             <label for="fhasta">Hasta</label>
                         <div class='input-group '>
-                            <input type='text' class="form-control datepicker" id="fhasta" name="fhasta"/>
+                            <input type='text' class="form-control datepicker" id="fechaHasta" name="fhasta"/>
                             <span class="input-group-addon">
                                 <span class="glyphicon glyphicon-calendar"></span>
                             </span>

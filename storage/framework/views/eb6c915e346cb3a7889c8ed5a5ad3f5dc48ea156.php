@@ -49,7 +49,7 @@
 	<script>  
 	    $(document).ready(function(){
 	        listarEmpleado();
-	    });	     
+	    });
 	</script>
 <?php $__env->stopSection(); ?>
 

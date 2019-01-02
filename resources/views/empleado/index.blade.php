@@ -51,6 +51,6 @@
 	<script>  
 	    $(document).ready(function(){
 	        listarEmpleado();
-	    });	     
+	    });
 	</script>
 @endsection

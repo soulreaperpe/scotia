@@ -59,45 +59,17 @@
             </div><!-- /.login-box-body -->
 
         </div><!-- /.login-box -->
-    </div>
-
+    </div>   
+    
+    <?php $__env->startSection('scripts'); ?>
+        <?php echo $__env->make('adminlte::layouts.partials.scripts', \Illuminate\Support\Arr::except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+    <?php echo $__env->yieldSection(); ?>
     <script>
-        
-        $(document).ready(function() {            
+/*  Marcacion Page
+*/        $(document).ready(function() {            
             selectProyectos();
         });
 
-        var  selectProyectos= function() {
-            $(".proyectos select").empty(); 
-            $.getJSON('/asistencia/marcacion/proyectos',function(data){ 
-                $(".proyectos select").append('<option selected="true" disabled="disabled">Elegir Proyecto</option>');         
-                $.each(data, function(key,value){
-                    $(".proyectos select").append('<option value="'+value['id']+'">'+value['nombre']+'</option>');  
-                });
-            });            
-        };
-
-
-        var  selectEmpleados= function() {
-            $(".empleados select").empty();                  
-            $.getJSON('asistencia/marcacion/proyecto/'+$(".proyectos select").val()+'/empleados',function(data){   
-                $(".empleados select").append('<option selected="true" disabled="disabled">Elegir Empleado</option>');             
-                $.each(data, function(key,value){
-                    $(".empleados select").append('<option value="'+value['idEmpleado']+'">'+value['apellidos']+', '+value['nombres']+'</option>');
-                });
-            });       
-        };
-
-
-        var  selectTurnos= function() {            
-            $(".turnos select").empty();
-            $.getJSON('asistencia/marcacion/proyecto/'+$(".proyectos select").val()+'/turnos',function(data){
-                $(".turnos select").append('<option selected="true" disabled="disabled">Elegir Turno</option>');
-                $.each(data, function(key,value){
-                    $(".turnos select").append('<option value="'+value['id']+'">'+value['codigo']+'</option>');
-                });
-            });      
-        };
 
 
         $(".proyectos select").change(function() {  
@@ -216,7 +188,9 @@
             });         
         }); 
 
+
     </script>
+
     </body>
 
 <?php $__env->stopSection(); ?>

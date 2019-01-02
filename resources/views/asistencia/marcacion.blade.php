@@ -61,13 +61,17 @@
             </div><!-- /.login-box-body -->
 
         </div><!-- /.login-box -->
-    </div>
-
+    </div>   
+    
+    @section('scripts')
+        @include('adminlte::layouts.partials.scripts')
+    @show
     <script>
-        
-        $(document).ready(function() {            
+/*  Marcacion Page
+*/        $(document).ready(function() {            
             selectProyectos();
         });
+
 
 
         $(".proyectos select").change(function() {  
@@ -186,7 +190,9 @@
             });         
         }); 
 
+
     </script>
+
     </body>
 
 @endsection

@@ -3,13 +3,13 @@
 </div>
 <div class="row">
     <form  class="form box-body" id="formNuevoEmpleado"> 
-        @csrf
-        <input id="idEmpleado" name="idEmpleado" value="{{ $empleado->id }}" hidden="" type="number" />
+        <?php echo csrf_field(); ?>
+        <input id="idEmpleado" name="idEmpleado" value="<?php echo e($empleado->id); ?>" hidden="" type="number" />
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group">
                     <label>Código</label>
-                    <input type="text" placeholder="Codigo" name="Codigo" value="{{ $empleado->codigo }}" class="form-control" autocomplete="off">
+                    <input type="text" placeholder="Codigo" name="Codigo" value="<?php echo e($empleado->codigo); ?>" class="form-control" autocomplete="off">
                 </div>
             </div>
         </div>
@@ -17,13 +17,13 @@
             <div class="col-md-6">
                 <div class="form-group">
                     <label>Nombres</label>
-                    <input type="text" placeholder="Nombres" name="Nombres" value="{{ $empleado->nombres }}" autofocus="autofocus" class="form-control" autocomplete="off">
+                    <input type="text" placeholder="Nombres" name="Nombres" value="<?php echo e($empleado->nombres); ?>" autofocus="autofocus" class="form-control" autocomplete="off">
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="form-group">
                     <label>Apellidos</label>
-                    <input type="text" placeholder="Apellidos" name="Apellidos" value="{{ $empleado->apellidos }}" class="form-control" autocomplete="off">
+                    <input type="text" placeholder="Apellidos" name="Apellidos" value="<?php echo e($empleado->apellidos); ?>" class="form-control" autocomplete="off">
                 </div>
             </div>
         </div>  
@@ -33,11 +33,11 @@
                     <label>Proyecto</label>
                     <select class="form-control" name="Proyecto">     
                         <option value="0"></option>
-                    @foreach($proyectos as $proyecto) 
-                        <option value="{{ $proyecto->id }}" @if(!empty($empleadosproyecto)>0) @if($empleadosproyecto->idProyecto == $proyecto->id) selected="selected" @endif @endif> 
-                            {{ $proyecto->nombre }} 
+                    <?php $__currentLoopData = $proyectos; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $proyecto): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?> 
+                        <option value="<?php echo e($proyecto->id); ?>" <?php if(!empty($empleadosproyecto)>0): ?> <?php if($empleadosproyecto->idProyecto == $proyecto->id): ?> selected="selected" <?php endif; ?> <?php endif; ?>> 
+                            <?php echo e($proyecto->nombre); ?> 
                         </option> 
-                    @endforeach                       
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>                       
                     </select>
                 </div>
             </div>

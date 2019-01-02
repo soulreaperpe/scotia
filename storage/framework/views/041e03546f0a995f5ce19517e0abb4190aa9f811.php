@@ -13,7 +13,7 @@
   <tr>
     <td><a href="#" onclick="infoLead(<?php echo e($turno->id); ?>)"><?php echo e($turno->codigo); ?></a></td>
     <td><?php echo e($turno->descripcion); ?></td>
-    <td><?php echo e(date("d-m-y",strtotime($turno->created_at))); ?></td>
+    <td><?php echo e(date("d-m-Y",strtotime($turno->created_at))); ?></td>
   </tr>
   <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
   </tbody>
@@ -25,7 +25,7 @@
       <h5>No hay resultados</h5>
   </div>
 <?php endif; ?>
-<div align="center" id="pg-turno">
+<div align="center" id="pg-turnos">
     <?php echo e($turnos->links()); ?>
 
 </div>

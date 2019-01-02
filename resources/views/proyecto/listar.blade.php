@@ -6,6 +6,7 @@
     <th>Descripcion</th>
     <th>Inicio</th>
     <th>Fin</th>
+    <th></th>
   </tr>
   </thead>
   <tbody>
@@ -14,13 +15,18 @@
   <tr>
     <td><a href="#" onclick="infoProyecto({{ $proyecto->id }})">{{ $proyecto->nombre }}</a></td>
     <td>{{ $proyecto->descripcion }}</td>
-    <td>{{  date("d-m-y",strtotime($proyecto->inicio)) }}</td>
-    <td>{{  date("d-m-y",strtotime($proyecto->fin)) }}</td>
+    <td>{{  date("d-m-Y",strtotime($proyecto->inicio)) }}</td>
+    <td>{{  date("d-m-Y",strtotime($proyecto->fin)) }}</td>
+    <td>
+      <a href="#" onclick="editarProyecto({{ $proyecto->id }})">
+         <i class="fa fa-fw fa-pencil"></i>
+      </a>
+    </td>
   </tr>
   @endforeach
   </tbody>
 </table>
-<div align="center" id="pg-proyecto">
+<div align="center" id="pg-proyectos">
     {{ $proyectos->links() }}
 </div>
 @else
